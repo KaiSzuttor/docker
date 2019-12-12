@@ -1,0 +1,27 @@
+# action.yml
+name: 'build-and-push'
+description: 'Build and push a docker image'
+inputs:
+  user:
+    description: 'username for the registry'
+    required: true
+  password:
+    description: 'password for the registry'
+    required: true
+  directory:
+    description: 'directory in which the Dockerfile can be found'
+    default: '.'
+  dockerfile:
+    description: 'name of the Dockerfile'
+    default: 'Dockerfile'
+  nameandtag:
+    description: 'name and tag for the image'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.user }}
+    - ${{ inputs.password }}
+    - ${{ inputs.directory }}
+    - ${{ inputs.dockerfile }}
+    - ${{ inputs.nameandtag }}

@@ -1,0 +1,40 @@
+name: Publish Docker
+on: [push]
+jobs:
+  ubuntu18:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone
+      uses: actions/checkout@master
+    - name: Dump steps context
+      env:
+        STEPS_CONTEXT: ${{ toJson(steps) }}
+      run: echo "$STEPS_CONTEXT"
+    - name: Build container
+      uses: ./.github/actions/build-and-push
+      with:
+        user: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        directory: docker/ubuntu-python3
+        dockerfile: Dockerfile-18.04
+        nameandtag: ubuntu1804:latest
+    - name: Test with espresso
+      uses: ./.github/actions/test-with-espresso
+      if: success()
+      with:
+        image: docker.pkg.github.com/kaiszuttor/docker/ubuntu1804:latest
+  ubuntu19:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: ./.github/actions/build-and-push
+      with:
+        user: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        directory: docker/ubuntu-python3
+        dockerfile: Dockerfile-19.04
+        nameandtag: ubuntu1904:latest
+    - uses: ./.github/actions/test-with-espresso
+      if: success()
+      with:
+        image: docker.pkg.github.com/kaiszuttor/docker/ubuntu1904:latest
